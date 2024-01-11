@@ -69,7 +69,7 @@ let products = [
                          <img src='img/${value.image}'>
                          <div class ='title'>${value.name}</div>
                          <div class ='price'>${value.price}</div>
-                         <button onclick='addtocard(${key}'>add to card</button>                         
+                         <button onclick='addtocard(${key})'>add to card</button>                         
         `
         list.appendChild(newdiv)
     }
@@ -77,3 +77,65 @@ let products = [
 }
 
 initapp();
+
+
+
+
+
+
+ const  addtocard =(key)=>{
+   console.log(key)
+
+   if(listcards[key]==null){
+     listcards[key]= JSON.parse(JSON.stringify(products[key]))
+     listcards[key].quantity =1
+   }
+   reloadcard();
+ }
+
+
+
+ const reloadcard = () =>{
+
+
+ listcard.innerHTML ='';
+ let count = 0;
+ let totalprice = 0;
+
+ listcards.forEach((value,key)=>{
+
+
+   totalprice = totalprice + value.price;
+   count = count + value.quantity;
+
+
+            if(value != null) {
+                let newdiv = document.createElement('li');
+                newdiv.innerHTML=`
+               
+               <div> <img src='img/${value.image}'> </div>
+                <div class ='cardtitle'>${value.name}</div>
+                <div class ='cardprice'>${value.price.toLocaleString()}</div>
+                
+                <div>
+                    <button style='background-color:#560bad'
+                     class='cardbutton'  onclick='chnagequantity(${key},${value.quantity - 1})'
+                     > - </button>
+          
+                     <div class ='count'>${count} </div>
+
+                     <button style='background-color:#560bad'
+                     class='cardbutton'  onclick='chnagequantity(${key},${value.quantity - 1})'
+                     > + </button>
+                </div>
+               
+                `
+
+                listcard.appendChild(newdiv)
+            }
+
+            total.innerHTML = totalprice.toLocaleString();
+            quantity.innerText = count;
+ })
+
+ }
