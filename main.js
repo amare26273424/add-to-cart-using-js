@@ -23,13 +23,13 @@ let products = [
     {
       id: 1,
       name: 'product 1',
-      image: 'bz1.png',
+      image: 'one.png',
       price: 2
     },
     {
       id: 2,
       name: 'product 2',
-      image: 'bz2.png',
+      image: 'samsung.png',
       price: 5
     },
     {
@@ -41,19 +41,19 @@ let products = [
     {
       id: 4,
       name: 'product 4',
-      image: 'one.png',
+      image: 'bz1.png',
       price: 15
     },
     {
       id: 5,
       name: 'product 5',
-      image: 'samsung.png',
+      image: 'bz2.png',
       price: 20
     },
     {
       id: 6,
       name: 'product 6',
-      image: 'so.png',
+      image: 'bz4.png',
       price: 25
     }
   ];
@@ -84,12 +84,16 @@ initapp();
 
 
  const  addtocard =(key)=>{
-   console.log(key)
+ 
 
    if(listcards[key]==null){
      listcards[key]= JSON.parse(JSON.stringify(products[key]))
      listcards[key].quantity =1
    }
+   else{
+    alert('product is already in cart')
+   }
+   
    reloadcard();
  }
 
@@ -102,9 +106,9 @@ initapp();
  let count = 0;
  let totalprice = 0;
 
+
+
  listcards.forEach((value,key)=>{
-
-
    totalprice = totalprice + value.price;
    count = count + value.quantity;
 
@@ -119,13 +123,13 @@ initapp();
                 
                 <div>
                     <button style='background-color:#560bad'
-                     class='cardbutton'  onclick='chnagequantity(${key},${value.quantity - 1})'
+                     class='cardbutton'  onclick='changequantity(${key},${value.quantity - 1})'
                      > - </button>
           
                      <div class ='count'>${count} </div>
 
                      <button style='background-color:#560bad'
-                     class='cardbutton'  onclick='chnagequantity(${key},${value.quantity - 1})'
+                     class='cardbutton'  onclick='changequantity(${key},${value.quantity + 1})'
                      > + </button>
                 </div>
                
@@ -139,3 +143,38 @@ initapp();
  })
 
  }
+
+
+ const changequantity = async (key,quantity) =>{
+       if(quantity == 0){
+          delete listcards[key]
+       }
+       else{
+        listcards[key].quantity = quantity;
+        listcards[key].price = quantity * products[key].price
+       }
+reloadcard()
+ }
+
+
+
+
+
+
+ paypal.Buttons({
+  createOrder: function(data, actions) {
+    return actions.order.create({
+      purchase_units: [{
+        amount: {
+          value: parseFloat(total.innerText) // Replace with your total value
+        }
+      }]
+    });
+  },
+  onApprove: function(data, actions) {
+    return actions.order.capture().then(function(details) {
+      alert('Transaction completed by ' + details.payer.name.given_name);
+      // Call your server to save the transaction
+    });
+  }
+}).render('#paypal-button-container');
